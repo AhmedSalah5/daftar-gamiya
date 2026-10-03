@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>دفتر الجمعية</title>
+    <script>
+        try {
+            var t = localStorage.getItem("daftar_theme");
+            if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+        } catch (e) { }
+    </script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header class="topbar">
+        <h1 id="appName"></h1>
+    </header>
+
+    <main id="view">
+        <div id="listScreen">
+            <button id="toggleForm" class="btn primary">+ جمعية جديدة</button>
+
+            <form id="gamiyaForm" class="card hidden">
+                <h2>جمعية جديدة</h2>
+
+                <label>اسم الجمعية
+                    <input name="name" required maxlength="40" placeholder="مثال: جمعية العائلة">
+                </label>
+
+                <label>قيمة القسط (جنيه)
+                    <input name="amount" type="number" min="1" required>
+                </label>
+
+                <label>عدد الأعضاء
+                    <input name="members" type="number" min="2" max="100" required>
+                </label>
+
+                <label>تاريخ البداية
+                    <input name="startDate" type="date" required>
+                </label>
+
+                <label>الدورية
+                    <select name="frequency">
+                        <option value="monthly">شهري</option>
+                        <option value="weekly">أسبوعي</option>
+                    </select>
+                </label>
+
+                <div class="row">
+                    <button type="submit" class="btn primary">حفظ</button>
+                    <button type="button" id="cancelForm" class="btn">إلغاء</button>
+                </div>
+            </form>
+
+            <div id="list"></div>
+        </div>
+        <div id="detailScreen" class="hidden"></div>
+        <div id="settingsScreen" class="hidden"></div>
+    </main>
+
+    <nav class="bottom-nav">
+        <button data-tab="home" class="active">
+            <span class="icon-wrap">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+            </span>
+            <span class="label">الجمعيات</span>
+        </button>
+
+        <button data-tab="settings">
+            <span class="icon-wrap">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <line x1="21" x2="14" y1="4" y2="4" />
+                    <line x1="10" x2="3" y1="4" y2="4" />
+                    <line x1="21" x2="12" y1="12" y2="12" />
+                    <line x1="8" x2="3" y1="12" y2="12" />
+                    <line x1="21" x2="16" y1="20" y2="20" />
+                    <line x1="12" x2="3" y1="20" y2="20" />
+                    <line x1="14" x2="14" y1="2" y2="6" />
+                    <line x1="8" x2="8" y1="10" y2="14" />
+                    <line x1="16" x2="16" y1="18" y2="22" />
+                </svg>
+            </span>
+            <span class="label">الإعدادات</span>
+        </button>
+    </nav>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
