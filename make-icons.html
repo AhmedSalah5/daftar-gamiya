@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<meta charset="UTF-8">
+<title>صانع الأيقونات</title>
+<body style="font-family:sans-serif;padding:20px">
+  <p>اضغط الزرين لتنزيل الأيقونتين، ثم ضعهما في مجلد <b>icons</b></p>
+  <button onclick="make(192)">icon-192.png</button>
+  <button onclick="make(512)">icon-512.png</button>
+
+<script>
+const SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#0f766e"/>
+  <circle cx="256" cy="256" r="130" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="16"/>
+  <circle cx="256" cy="126" r="30" fill="#fff"/>
+  <circle cx="386" cy="256" r="30" fill="#fff"/>
+  <circle cx="256" cy="386" r="30" fill="#fff"/>
+  <circle cx="126" cy="256" r="30" fill="#fff"/>
+  <circle cx="256" cy="256" r="56" fill="#fff"/>
+  <circle cx="256" cy="256" r="30" fill="#0f766e"/>
+</svg>`;
+
+function make(size) {
+  const img = new Image();
+  img.onload = () => {
+    const c = document.createElement("canvas");
+    c.width = c.height = size;
+    c.getContext("2d").drawImage(img, 0, 0, size, size);
+    c.toBlob(b => {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(b);
+      a.download = `icon-${size}.png`;
+      a.click();
+    });
+  };
+  img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(SVG);
+}
+</script>
+</body>
+</html>
