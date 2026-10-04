@@ -17,7 +17,8 @@ const ACCENTS = [
 // بيانات المطوّر (عدّلها)
 const SHOW_CREDIT = true;
 const DEV_NAME = "احمد صلاح";
-const DEV_URL = "https://dev-a-salah.vercel.app/";   // بدون علامات اقتباس داخل الرابط
+// const DEV_URL = "https://dev-a-salah.vercel.app/";   // بدون علامات اقتباس داخل الرابط
+const DEV_URL = "https://wa.me/201140927066";   // بدون علامات اقتباس داخل الرابط
 
 document.getElementById("appName").textContent = APP_NAME;
 document.title = APP_NAME;
