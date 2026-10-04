@@ -12,12 +12,23 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="دفتر الجمعية">
-    <script>
+    <!-- <script>
         try {
             var t = localStorage.getItem("daftar_theme");
             if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
         } catch (e) { }
+    </script> -->
+
+    <script>
+        try {
+            var r = document.documentElement;
+            var t = localStorage.getItem("daftar_theme");
+            var a = localStorage.getItem("daftar_accent");
+            if (t === "light" || t === "dark") r.setAttribute("data-theme", t);
+            if (a && /^[a-z]+$/.test(a) && a !== "teal") r.setAttribute("data-accent", a);
+        } catch (e) { }
     </script>
+
     <link rel="stylesheet" href="style.css">
 </head>
 

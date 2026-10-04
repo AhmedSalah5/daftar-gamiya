@@ -1,4 +1,4 @@
-const CACHE = "daftar-gamiya-v1";   // غيّر الرقم عند كل تحديث للتطبيق
+const CACHE = "daftar-gamiya-v2";   // غيّر الرقم عند كل تحديث للتطبيق
 
 const ASSETS = [
   "./",
