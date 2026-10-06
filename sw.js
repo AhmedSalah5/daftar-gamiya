@@ -1,17 +1,19 @@
-const CACHE = "daftar-gamiya-v2";   // غيّر الرقم عند كل تحديث للتطبيق
+const CACHE = "daftar-gamiya-v3";   // ارفع الرقم عند كل تحديث
 
-const ASSETS = [
-  "./",
-  "./index.html",
-  "./style.css",
-  "./app.js",
-  "./manifest.webmanifest",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png",
-];
+// ملفات أساسية: إن فشل أحدها يفشل التثبيت (فنعرف بالخطأ بدل أن يعمل بشكل ناقص)
+const CORE = ["./", "./index.html", "./style.css", "./app.js", "./manifest.webmanifest"];
+// ملفات ثانوية: لا يتوقف التثبيت إن تعذّر أحدها
+const EXTRA = ["./icons/icon-192.png", "./icons/icon-512.png"];
 
 self.addEventListener("install", e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
+  e.waitUntil(
+    caches.open(CACHE).then(async cache => {
+      await cache.addAll(CORE.map(u => new Request(u, { cache: "reload" })));
+      await Promise.all(
+        EXTRA.map(u => cache.add(u).catch(err => console.warn("SW: لم يُخزَّن", u, err)))
+      );
+    })
+  );
   self.skipWaiting();
 });
 
@@ -23,21 +25,33 @@ self.addEventListener("activate", e => {
   );
 });
 
-// من الذاكرة أولاً (سريع وأوفلاين)، ويُحدَّث في الخلفية
 self.addEventListener("fetch", e => {
   const req = e.request;
   if (req.method !== "GET" || new URL(req.url).origin !== location.origin) return;
 
-  e.respondWith(
-    caches.open(CACHE).then(async cache => {
-      const hit = await cache.match(req);
-      const net = fetch(req)
-        .then(res => {
-          if (res.ok) cache.put(req, res.clone());
-          return res;
-        })
-        .catch(() => hit || cache.match("./index.html"));
-      return hit || net;
-    })
-  );
+  e.respondWith((async () => {
+    const cache = await caches.open(CACHE);
+    const hit = await cache.match(req, { ignoreSearch: true });
+
+    const network = fetch(req)
+      .then(res => {
+        if (res.status === 200) cache.put(req, res.clone());
+        return res;
+      })
+      .catch(() => null);
+
+    if (hit) {
+      e.waitUntil(network);      // يحدّث النسخة في الخلفية
+      return hit;
+    }
+
+    const res = await network;
+    if (res) return res;
+
+    // لا إنترنت ولا نسخة محفوظة: نرجع الصفحة الرئيسية للتنقل
+    if (req.mode === "navigate") {
+      return (await cache.match("./index.html")) || (await cache.match("./"));
+    }
+    return Response.error();
+  })());
 });
