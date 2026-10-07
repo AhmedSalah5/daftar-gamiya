@@ -575,6 +575,41 @@ function importData(file) {
     reader.readAsText(file);
 }
 
+async function swDiagnostics() {
+  const out = [];
+  out.push("HTTPS: " + (location.protocol === "https:"));
+  out.push("الرابط: " + location.href);
+
+  if ("serviceWorker" in navigator) {
+    const regs = await navigator.serviceWorker.getRegistrations();
+    out.push("عدد التسجيلات: " + regs.length);
+    regs.forEach(r => {
+      const w = r.active || r.waiting || r.installing;
+      out.push("النطاق: " + r.scope);
+      out.push("الحالة: " + (w ? w.state : "لا يوجد"));
+      out.push("مفعّل: " + !!r.active + " · منتظر: " + !!r.waiting);
+    });
+    out.push("يتحكم بهذه الصفحة: " + !!navigator.serviceWorker.controller);
+  } else {
+    out.push("المتصفح لا يدعم service worker");
+  }
+
+  if ("caches" in window) {
+    const keys = await caches.keys();
+    out.push("الذاكرات: " + (keys.join(", ") || "لا يوجد"));
+    for (const k of keys) {
+      const c = await caches.open(k);
+      const reqs = await c.keys();
+      out.push(k + ": " + reqs.length + " ملف");
+    }
+  }
+
+  if (navigator.storage && navigator.storage.persisted) {
+    out.push("تخزين دائم: " + (await navigator.storage.persisted()));
+  }
+  return out.join("\n");
+}
+
 // ---------- الإعدادات ----------
 function renderSettings() {
     const t = getTheme();
@@ -620,6 +655,8 @@ function renderSettings() {
       <p>${esc(APP_NAME)} · عدد الجمعيات: ${gamiyat.length}</p>
       ${credit}
       <button class="btn danger" data-act="wipe">حذف كل البيانات</button>
+      <button class="btn" data-act="diag">🔍 تشخيص العمل بدون إنترنت</button>
+      <pre id="diagOut" class="diag hidden"></pre>
     </section>
   `;
 }
@@ -650,7 +687,13 @@ settingsScreen.addEventListener("click", e => {
             save();
             renderSettings();
         }
+    }else if (act === "diag") {
+        const box = document.getElementById("diagOut");
+        box.classList.remove("hidden");
+        box.textContent = "جارٍ الفحص...";
+        swDiagnostics().then(t => (box.textContent = t));
     }
+
 });
 
 settingsScreen.addEventListener("change", e => {

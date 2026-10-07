@@ -286,3 +286,15 @@ span.late { color: var(--danger); font-weight: bold; }
   background: color-mix(in srgb, var(--primary) 16%, transparent);
 }
 .bottom-nav button:active .icon-wrap { transform: scale(.92); }
+
+.diag {
+  white-space: pre-wrap;
+  font-size: 12px;
+  line-height: 1.7;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  margin: 10px 0;
+  overflow: auto;
+}
